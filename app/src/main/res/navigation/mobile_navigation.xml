@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.pokebuilder.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_pokedex"
+        android:name="com.example.pokebuilder.ui.pokedex.PokedexFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_pokedex" />
+
+    <fragment
+        android:id="@+id/nav_teams"
+        android:name="com.example.pokebuilder.ui.teams.TeamsFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_teams" />
+    <fragment
+        android:id="@+id/sign_out"
+        android:name="com.example.pokebuilder.ui.LogoutFragment"
+        android:label="@string/menu_signout"
+        tools:layout="@layout/fragment_logout" />
+</navigation>
