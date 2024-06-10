@@ -67,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        NavigationView  navigationView = binding.navView;
+        View hview = navigationView.getHeaderView(0);
+        usernameTextView = (TextView) hview.findViewById(R.id.nav_header_username);
+        emailTextView = (TextView) hview.findViewById(R.id.nav_header_email);
+        usernameTextView.setText(sharedPreferences.getString("username", ""));
+        emailTextView.setText(sharedPreferences.getString("email", ""));
+    }
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);

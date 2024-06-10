@@ -3,6 +3,8 @@ package com.example.pokebuilder.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.JsonToken;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +21,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.pokebuilder.R;
 import com.example.pokebuilder.databinding.ActivityLoginBinding;
 import com.example.pokebuilder.databinding.ActivitySignupMenuBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -75,11 +81,11 @@ public class SignupMenu extends AppCompatActivity {
 
                 Response response;
                 try {
-                    response = makePostRequest("https://www.example.com/index.php", formBody);
+                    response = makePostRequest("http://localhost:8080/account/register", formBody);
                     if(response.message().equals("400")) {
                         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("username", usernameEditText.getText().toString());
+                        getSession(response.body().string(), editor);
                         editor.putString("email", emailEditText.getText().toString());
                         editor.putString("password", passwordEditText.getText().toString());
                         editor.commit();
@@ -88,6 +94,7 @@ public class SignupMenu extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
+                    System.out.println(e);
                     Toast.makeText(getApplicationContext(), "Server Offline!", Toast.LENGTH_LONG).show();
                     sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -103,6 +110,17 @@ public class SignupMenu extends AppCompatActivity {
 
     }
 
+    private void getSession(String jsonText, SharedPreferences.Editor editor) {
+        try {
+            JSONObject json = new JSONObject(jsonText);
+            String session = json.getString("session");
+            String username = json.getString("username");
+            editor.putString("username", username);
+            editor.putString("session", session);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
     private Response makePostRequest(String url, RequestBody formBody) {
         client = new OkHttpClient();
         Request request = new Request.Builder()

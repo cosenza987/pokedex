@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -31,6 +32,9 @@ import com.example.pokebuilder.ui.data.model.LoggedInUser;
 import com.example.pokebuilder.ui.ui.login.LoginViewModel;
 import com.example.pokebuilder.ui.ui.login.LoginViewModelFactory;
 import com.example.pokebuilder.databinding.ActivityLoginBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -50,6 +54,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build .VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new
+                    StrictMode.ThreadPolicy .Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -150,16 +159,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 Response response;
                 try {
-                    response = makePostRequest("https://www.example.com/index.php", formBody);
-                    if(response.message().equals("400")) {
-                        String username = response.headers().get("username");
+                    response = makePostRequest("http://localhost:8080/account/login", formBody);
+                    if(response.message().equals("200")) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
                         loginViewModel.login(emailEditText.getText().toString(),
                                 passwordEditText.getText().toString());
                         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+                        getSession(response.body().string(), editor);
                         editor.putString("email", emailEditText.getText().toString());
-                        editor.putString("username", username);
                         editor.putString("password", passwordEditText.getText().toString());
                         editor.commit();
                         finish();
@@ -167,6 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
+                    System.out.println(e);
                     Toast.makeText(getApplicationContext(), "Server Offline!", Toast.LENGTH_LONG).show();
                     String username = "lol767";
                     loadingProgressBar.setVisibility(View.VISIBLE);
@@ -192,6 +201,18 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void getSession(String jsonText, SharedPreferences.Editor editor) {
+        try {
+            JSONObject json = new JSONObject(jsonText);
+            String session = json.getString("session");
+            String username = json.getString("username");
+            editor.putString("username", username);
+            editor.putString("session", session);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
     private Response makePostRequest(String url, RequestBody formBody) {
         client = new OkHttpClient();
