@@ -17,9 +17,6 @@
             android:name=".ui.TeamBuilder"
             android:exported="false" />
         <activity
-            android:name=".TeamBuilder"
-            android:exported="false" />
-        <activity
             android:name=".ui.SignupMenu"
             android:exported="false" />
         <activity
