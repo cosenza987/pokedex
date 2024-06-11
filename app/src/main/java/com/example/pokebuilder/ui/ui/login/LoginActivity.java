@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Response response;
                 try {
-                    response = makePostRequest("http://localhost:8080/account/login", formBody);
+                    response = makePostRequest("http://10.0.2.2:8080/account/login", formBody);
                     if(response.message().equals("200")) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
                         loginViewModel.login(emailEditText.getText().toString(),

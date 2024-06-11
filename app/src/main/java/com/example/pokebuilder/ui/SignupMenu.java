@@ -81,7 +81,7 @@ public class SignupMenu extends AppCompatActivity {
 
                 Response response;
                 try {
-                    response = makePostRequest("http://localhost:8080/account/register", formBody);
+                    response = makePostRequest("http://10.0.2.2:8080/account/register", formBody);
                     if(response.message().equals("400")) {
                         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -91,7 +91,7 @@ public class SignupMenu extends AppCompatActivity {
                         editor.commit();
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Unable to Process!", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     System.out.println(e);
