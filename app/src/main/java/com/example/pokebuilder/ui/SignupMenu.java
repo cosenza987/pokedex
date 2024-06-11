@@ -43,6 +43,7 @@ public class SignupMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Sign Up Menu");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_signup_menu);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

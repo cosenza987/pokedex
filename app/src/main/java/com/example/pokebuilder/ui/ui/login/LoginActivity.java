@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                     StrictMode.ThreadPolicy .Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        setTitle("Imemon Login Screen");
         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

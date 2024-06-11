@@ -50,11 +50,6 @@ public class MainActivity extends AppCompatActivity {
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        View hview = navigationView.getHeaderView(0);
-        usernameTextView = (TextView) hview.findViewById(R.id.nav_header_username);
-        emailTextView = (TextView) hview.findViewById(R.id.nav_header_email);
-        usernameTextView.setText(sharedPreferences.getString("username", ""));
-        emailTextView.setText(sharedPreferences.getString("email", ""));
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -75,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         emailTextView = (TextView) hview.findViewById(R.id.nav_header_email);
         usernameTextView.setText(sharedPreferences.getString("username", ""));
         emailTextView.setText(sharedPreferences.getString("email", ""));
+        setTitle("Main Menu");
     }
 
 
