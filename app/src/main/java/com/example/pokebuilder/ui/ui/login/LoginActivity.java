@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                     StrictMode.ThreadPolicy .Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        setTitle("Imemon Login Screen");
+        setTitle("IMEmon Login Screen");
         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -165,8 +165,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Response response;
                 try {
-                    response = makePostRequest("http://192.168.50.223:8080/account/login", formBody);
-                    if(response.message().equals("200")) {
+                    response = makePostRequest("http://10.0.2.2:8080/account/login", formBody);
+                    System.out.println(response);
+                    if(response.code() == 200) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
                         loginViewModel.login(emailEditText.getText().toString(),
                                 passwordEditText.getText().toString());
@@ -176,6 +177,8 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString("email", emailEditText.getText().toString());
                         editor.putString("password", passwordEditText.getText().toString());
                         editor.commit();
+                        String welcome = "Welcome " + sharedPreferences.getString("username", "") + "!";
+                        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
                         finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
@@ -239,9 +242,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        return;
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

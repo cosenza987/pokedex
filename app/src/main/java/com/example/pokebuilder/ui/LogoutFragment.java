@@ -9,12 +9,20 @@ import android.os.Bundle;
 import androidx.core.content.IntentCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.pokebuilder.MainActivity;
 import com.example.pokebuilder.R;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +45,7 @@ public class LogoutFragment extends Fragment {
     public LogoutFragment() {
         // Required empty public constructor
     }
-
+    private OkHttpClient client;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -59,18 +67,61 @@ public class LogoutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build .VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new
+                    StrictMode.ThreadPolicy .Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         sharedPreferences = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.commit();
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getContext().startActivity(intent);
-        System.exit(0);
+        String username = sharedPreferences.getString("username", "");
+        String session = sharedPreferences.getString("session", "");
+        RequestBody formBody = new FormBody.Builder()
+                .add("username", username)
+                .add("session", session)
+                .build();
+        System.out.println(username);
+        System.out.println(session);
+        Response response;
+        try {
+            response = makePostRequest("http://10.0.2.2:8080/account/logoff", formBody);
+            if(response.code() == 200) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getContext().startActivity(intent);
+                System.exit(0);
+            } else {
+                Toast.makeText(getContext(), "Unable to logoff! Call Calheira!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            Toast.makeText(getContext(), "Unable to logoff due to no connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+    }
+
+    private Response makePostRequest(String url, RequestBody formBody) {
+        client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        try {
+            return client.newCall(request).execute();
+
+            //if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

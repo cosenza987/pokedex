@@ -96,8 +96,8 @@ public class SignupMenu extends AppCompatActivity {
                 }
                 Response response;
                 try {
-                    response = makePostRequest("http://192.168.50.223:8080/account/register", formBody);
-                    if(response.message().equals("400")) {
+                    response = makePostRequest("http://10.0.2.2:8080/account/register", formBody);
+                    if(response.code() == 200) {
                         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         getSession(response.body().string(), editor);

@@ -16,11 +16,15 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-    ArrayList pokemonList;
+    ArrayList<PokeDescriptor> pokemonList;
     Context context;
     public Adapter(Context context, ArrayList pokemonList) {
         this.context = context;
         this.pokemonList = pokemonList;
+    }
+    public void setFilteredList(ArrayList filteredList) {
+        this.pokemonList = filteredList;
+        notifyDataSetChanged();
     }
     @NonNull
     @Override
@@ -36,6 +40,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.name.setText(item.getName());
         holder.type1.setText(item.getType1());
         holder.type2.setText(item.getType2());
+        holder.pokeid.setText(item.getPokeid());
     }
     @Override
     public int getItemCount() {
@@ -43,14 +48,18 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
-        TextView name, type1, type2;
+        TextView name, type1, type2, pokeid;
         public ViewHolder(View view) {
             super(view);
             image = (ImageView) view.findViewById(R.id.img);
             name = (TextView) view.findViewById(R.id.name);
             type1 = (TextView) view.findViewById(R.id.type1);
             type2 = (TextView) view.findViewById(R.id.type2);
+            pokeid = (TextView) view.findViewById(R.id.pokeid);
         }
+    }
+    public PokeDescriptor getItem(int position) {
+        return pokemonList.get(position);
     }
 
 }
