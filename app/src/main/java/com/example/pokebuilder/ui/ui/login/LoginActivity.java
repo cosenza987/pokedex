@@ -36,6 +36,8 @@ import com.example.pokebuilder.databinding.ActivityLoginBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -157,10 +159,13 @@ public class LoginActivity extends AppCompatActivity {
                         .add("email", email) //calheiros
                         .add("password", password)
                         .build();
-
+                if(!isValid(email)) {
+                    Toast.makeText(getApplicationContext(), "Invalid e-mail address!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Response response;
                 try {
-                    response = makePostRequest("http://10.0.2.2:8080/account/login", formBody);
+                    response = makePostRequest("http://192.168.50.223:8080/account/login", formBody);
                     if(response.message().equals("200")) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
                         loginViewModel.login(emailEditText.getText().toString(),
@@ -178,17 +183,6 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     System.out.println(e);
                     Toast.makeText(getApplicationContext(), "Server Offline!", Toast.LENGTH_LONG).show();
-                    String username = "lol767";
-                    loadingProgressBar.setVisibility(View.VISIBLE);
-                    loginViewModel.login(emailEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                    sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("email", emailEditText.getText().toString());
-                    editor.putString("username", username);
-                    editor.putString("password", passwordEditText.getText().toString());
-                    editor.commit();
-                    finish();
                 }
             }
 
@@ -229,6 +223,19 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

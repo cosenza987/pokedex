@@ -9,11 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokebuilder.databinding.FragmentPokedexBinding;
 
-public class PokedexFragment extends Fragment {
+import java.util.ArrayList;
 
+public class PokedexFragment extends Fragment {
+    RecyclerView recyclerView;
+    Adapter adapter;
+    ArrayList pokemonList = new ArrayList<>();
     private FragmentPokedexBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
