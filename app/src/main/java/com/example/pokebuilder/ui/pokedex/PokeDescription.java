@@ -14,8 +14,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.databinding.ActivityPokeDescriptionBinding;
 import com.squareup.picasso.Picasso;
 
@@ -56,7 +58,7 @@ public class PokeDescription extends AppCompatActivity {
         });
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
-        String url = "http://10.0.2.2:8080/pokedex/" + String.valueOf(id);
+        String url = "http://" + UrlSingleton.getInstance().url + ":8080/pokedex/" + String.valueOf(id);
         String response = makeGetRequest(url);
         parseJSON(response);
         setTitle(name);
@@ -70,11 +72,12 @@ public class PokeDescription extends AppCompatActivity {
             binding.type2Text.setText(type[1]);
             binding.type2Text.setVisibility(View.VISIBLE);
         }
-        recyclerViewAbilities = (RecyclerView) findViewById(R.id.abilities_recyclerview);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        recyclerViewAbilities = createRecyclerView();
         recyclerViewAbilities.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewMoves = (RecyclerView) findViewById(R.id.moves_recyclerview);
+        recyclerViewMoves = createRecyclerView();
         recyclerViewMoves.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewBaseStats = (RecyclerView) findViewById(R.id.base_stats_recyclerview);
+        recyclerViewBaseStats = createRecyclerView();
         recyclerViewBaseStats.setLayoutManager(new LinearLayoutManager(this));
         baseStatsAdapter = new BaseStatsAdapter(this, generateBaseStats());
         recyclerViewBaseStats.setAdapter(baseStatsAdapter);
@@ -84,6 +87,12 @@ public class PokeDescription extends AppCompatActivity {
 
         movesAdapter = new MovesAdapter(this, move);
         recyclerViewMoves.setAdapter(movesAdapter);
+        ArrayList<RecyclerView> recyclerViews = new ArrayList<>();
+        recyclerViews.add(recyclerViewBaseStats);
+        recyclerViews.add(recyclerViewAbilities);
+        recyclerViews.add(recyclerViewMoves);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(recyclerViews);
+        viewPager.setAdapter(adapter);
     }
     private ArrayList generateBaseStats() {
         ArrayList baseStatsList = new ArrayList<BaseStat>();
@@ -94,6 +103,15 @@ public class PokeDescription extends AppCompatActivity {
         baseStatsList.add(new BaseStat("Special Defense", spDef));
         baseStatsList.add(new BaseStat("Speed", speed));
         return baseStatsList;
+    }
+
+    private RecyclerView createRecyclerView() {
+        RecyclerView recyclerView = new RecyclerView(this);
+        recyclerView.setLayoutParams(new RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+        ));
+        return recyclerView;
     }
 
     private String makeGetRequest(String url) {

@@ -1,6 +1,7 @@
 package com.example.pokebuilder.ui.pokedex;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.JsonToken;
@@ -14,11 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokebuilder.MainActivity;
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.databinding.FragmentPokedexBinding;
 
 import org.json.JSONArray;
@@ -56,7 +59,8 @@ public class PokedexFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //pokemonList.add(new PokeDescriptor("buba", "grass", "poison", "https://reqres.in/img/faces/6-image.jpg"));
         //pokemonList.add(new PokeDescriptor("hamilton", "gata", "poison", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMMjDtV8HQp1QkzGkQhjzOFgbyr7dU8vBIog&s"));
-        String url = "http://10.0.2.2:8080/pokedex";
+        String url = "http://" + UrlSingleton.getInstance().url + ":8080/pokedex";
+        System.out.println(url);
         String response = makeGetRequest(url);
         parseJSON(response);
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
@@ -65,6 +69,8 @@ public class PokedexFragment extends Fragment {
         adapter = new Adapter(getActivity(), pokemonList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
         searchView = getActivity().findViewById(R.id.pokeSearch);
         searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

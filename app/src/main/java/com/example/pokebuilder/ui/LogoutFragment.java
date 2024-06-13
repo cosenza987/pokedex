@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.pokebuilder.MainActivity;
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -87,7 +88,7 @@ public class LogoutFragment extends Fragment {
         System.out.println(session);
         Response response;
         try {
-            response = makePostRequest("http://10.0.2.2:8080/account/logoff", formBody);
+            response = makePostRequest("http://" + UrlSingleton.getInstance().url + ":8080/account/logoff", formBody);
             if(response.code() == 200) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();

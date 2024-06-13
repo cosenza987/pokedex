@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.ui.SignupMenu;
 import com.example.pokebuilder.ui.data.model.LoggedInUser;
 import com.example.pokebuilder.ui.ui.login.LoginViewModel;
@@ -165,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Response response;
                 try {
-                    response = makePostRequest("http://10.0.2.2:8080/account/login", formBody);
+                    response = makePostRequest("http://" + UrlSingleton.getInstance().url + ":8080/account/login", formBody);
                     System.out.println(response);
                     if(response.code() == 200) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
