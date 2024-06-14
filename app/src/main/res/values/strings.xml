@@ -26,4 +26,7 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="team_name">Team Name</string>
+    <string name="save_team">Save Team</string>
+    <string name="choose_pok_mon">Choose Pokémon</string>
 </resources>
