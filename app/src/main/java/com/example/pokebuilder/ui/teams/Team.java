@@ -3,10 +3,11 @@ package com.example.pokebuilder.ui.teams;
 import com.example.pokebuilder.PokemonFourMoves;
 import com.example.pokebuilder.pokemon;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Team {
+public class Team implements Serializable {
     private int _id;
     private String name;
     private ArrayList<PokemonFourMoves> pokemons;

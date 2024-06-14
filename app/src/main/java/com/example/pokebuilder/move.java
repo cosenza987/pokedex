@@ -1,5 +1,8 @@
 package com.example.pokebuilder;
-public class move {
+
+import java.io.Serializable;
+
+public class move implements Serializable {
 
     private int _id;
     private String name;

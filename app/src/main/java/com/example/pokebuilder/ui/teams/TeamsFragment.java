@@ -2,6 +2,7 @@ package com.example.pokebuilder.ui.teams;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -23,6 +24,7 @@ import com.example.pokebuilder.databinding.FragmentTeamsBinding;
 import com.example.pokebuilder.move;
 import com.example.pokebuilder.pokemon;
 import com.example.pokebuilder.ui.TeamBuilder;
+import com.example.pokebuilder.ui.TeamSlot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,7 +39,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class TeamsFragment extends Fragment {
+public class TeamsFragment extends Fragment implements TeamsFragmentRecyclerAdapter.ItemClickListener{
 
     TeamsFragmentRecyclerAdapter adapter;
     private FragmentTeamsBinding binding;
@@ -75,7 +77,15 @@ public class TeamsFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 binding.teamFragmentLayout.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+        adapter.setClickListener(this);
         return root;
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Intent toTeamView = new Intent(getContext(), TeamView.class);
+        toTeamView.putExtra("team", adapter.getItem(position));
+        startActivity(toTeamView);
     }
 
     @Override
@@ -130,7 +140,7 @@ public class TeamsFragment extends Fragment {
                     pokemon poke = parseJSONPokemon(responsePoke);
                     ArrayList<move> moves = new ArrayList<move>();
                     for(int k=1;k<=4;k++){
-                        String moveId = row.getString("poke"+j+k);
+                        String moveId = row.getString("move"+j+k);
                         String responsemove = makeGetRequest("http://lolcraft.servebeer.com:8080/ImemonAPI_war_exploded/pokedex/moves/"+moveId);
                         move m = parseJSONMove(responsemove);
                         moves.add(m);

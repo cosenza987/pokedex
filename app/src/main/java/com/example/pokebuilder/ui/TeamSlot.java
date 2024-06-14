@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -110,8 +111,11 @@ public class TeamSlot extends AppCompatActivity {
             public void onClick(View v) {
                 if (pokeId == -1) {
                     Toast.makeText(TeamSlot.this, "Choose a Pokémon", Toast.LENGTH_LONG).show();
-                }
-                else{
+                } else if (moveIds.get(0)==-1 || moveIds.get(1)==-1 || moveIds.get(2)==-1 || moveIds.get(3)==-1) {
+                    Toast.makeText(TeamSlot.this, "Choose 4 moves", Toast.LENGTH_LONG).show();
+                } else if (new HashSet<Integer>(moveIds).size() < 4) {
+                    Toast.makeText(TeamSlot.this, "Choose 4 different moves", Toast.LENGTH_LONG).show();
+                } else{
                     Intent intent = new Intent(getApplicationContext(), TeamBuilder.class);
                     intent.putExtra("selectedpoke", pokeId);
                     for (int i=1;i<=4;i++){

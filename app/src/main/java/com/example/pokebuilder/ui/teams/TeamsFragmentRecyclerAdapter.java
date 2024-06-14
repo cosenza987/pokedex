@@ -44,7 +44,7 @@ public class TeamsFragmentRecyclerAdapter extends RecyclerView.Adapter<TeamsFrag
         Team team = teams.get(position);
         holder.teamNameTextView.setText(team.getName());
         for (int i=1;i<=6;i++){
-            String imgUrl = teams.get(position).getPokemon(i).getPokemon().getImage();
+            String imgUrl = teams.get(position).getPokemon(i-1).getPokemon().getImage();
             Picasso.get().load(imgUrl).into(holder.pokemonImageViews.get(i-1));
         }
     }

@@ -1,6 +1,8 @@
 package com.example.pokebuilder;
 
-public class pokemon {
+import java.io.Serializable;
+
+public class pokemon implements Serializable {
 
     private int _id;
     private String image;

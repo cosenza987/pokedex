@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 RequestBody formBody = new FormBody.Builder()
-                        .add("email", email) //calheiros
+                        .add("email", email)
                         .add("password", password)
                         .build();
                 if(!isValid(email)) {

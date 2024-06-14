@@ -28,6 +28,9 @@
             android:name=".ui.SignupMenu"
             android:exported="false" />
         <activity
+            android:name=".ui.teams.TeamView"
+            android:exported="false" />
+        <activity
             android:name=".ui.ui.login.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login" />
