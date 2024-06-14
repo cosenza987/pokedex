@@ -58,7 +58,7 @@ public class PokeDescription extends AppCompatActivity {
         });
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
-        String url = "http://" + UrlSingleton.getInstance().url + ":8080/pokedex/" + String.valueOf(id);
+        String url = "http://" + UrlSingleton.getInstance().url + "/pokedex/" + String.valueOf(id);
         String response = makeGetRequest(url);
         parseJSON(response);
         setTitle(name);
@@ -147,7 +147,7 @@ public class PokeDescription extends AppCompatActivity {
             JSONArray types = data.getJSONArray("types");
             type[0] = type[1] = "";
             for(int j = 0; j < types.length(); j++) {
-                type[j] = types.getJSONObject(j).getString("name");
+                type[j] = types.getString(j);
             }
 
             JSONArray abilities = data.getJSONArray("abilities");

@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -59,7 +60,7 @@ public class PokedexFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //pokemonList.add(new PokeDescriptor("buba", "grass", "poison", "https://reqres.in/img/faces/6-image.jpg"));
         //pokemonList.add(new PokeDescriptor("hamilton", "gata", "poison", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMMjDtV8HQp1QkzGkQhjzOFgbyr7dU8vBIog&s"));
-        String url = "http://" + UrlSingleton.getInstance().url + ":8080/pokedex";
+        String url = "http://" + UrlSingleton.getInstance().url + "/pokedex";
         System.out.println(url);
         String response = makeGetRequest(url);
         parseJSON(response);
@@ -120,7 +121,9 @@ public class PokedexFragment extends Fragment {
     }
 
     private String makeGetRequest(String url) {
-        client = new OkHttpClient();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(1, TimeUnit.MINUTES).writeTimeout(1, TimeUnit.MINUTES).readTimeout(1, TimeUnit.MINUTES);
+        client = builder.build();
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -136,8 +139,7 @@ public class PokedexFragment extends Fragment {
     private void parseJSON(String jsonText) {
         try {
             JSONObject json = new JSONObject(jsonText);
-            JSONObject data1 = json.getJSONObject("pokedex");
-            JSONArray data = data1.getJSONArray("pokedex");
+            JSONArray data = json.getJSONArray("pokedex");
             for(int i = 0; i < data.length(); i++) {
                 JSONObject row = data.getJSONObject(i);
                 String name = row.getString("name");
@@ -149,7 +151,7 @@ public class PokedexFragment extends Fragment {
                 String type[] = new String[2];
                 type[0] = type[1] = "";
                 for(int j = 0; j < types.length(); j++) {
-                    type[j] = types.getJSONObject(j).getString("name");
+                    type[j] = types.getString(j);
                 }
                 int index = pokemonList.size();
                 pokemonList.add(index, new PokeDescriptor(name, type[0], type[1], imgUrl, pokeid));

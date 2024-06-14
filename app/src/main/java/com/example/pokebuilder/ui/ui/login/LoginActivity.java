@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pokebuilder.MainActivity;
 import com.example.pokebuilder.R;
 import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.ui.SignupMenu;
@@ -166,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Response response;
                 try {
-                    response = makePostRequest("http://" + UrlSingleton.getInstance().url + ":8080/account/login", formBody);
+                    response = makePostRequest("http://" + UrlSingleton.getInstance().url + "/account/login", formBody);
                     System.out.println(response);
                     if(response.code() == 200) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
@@ -180,7 +181,10 @@ public class LoginActivity extends AppCompatActivity {
                         editor.commit();
                         String welcome = "Welcome " + sharedPreferences.getString("username", "") + "!";
                         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-                        finish();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getApplicationContext().startActivity(intent);
+                        System.exit(0);
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
                     }

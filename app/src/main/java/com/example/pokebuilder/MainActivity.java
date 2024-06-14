@@ -25,7 +25,6 @@ import com.example.pokebuilder.databinding.ActivityMainBinding;
 
 
 public class MainActivity extends AppCompatActivity {
-    final String url = "10.0.2.2";
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;

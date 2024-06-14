@@ -88,7 +88,8 @@ public class LogoutFragment extends Fragment {
         System.out.println(session);
         Response response;
         try {
-            response = makePostRequest("http://" + UrlSingleton.getInstance().url + ":8080/account/logoff", formBody);
+            response = makePostRequest("http://" + UrlSingleton.getInstance().url + "/account/logoff", formBody);
+            System.out.println(response.code());
             if(response.code() == 200) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -98,8 +99,14 @@ public class LogoutFragment extends Fragment {
                 getContext().startActivity(intent);
                 System.exit(0);
             } else {
-                Toast.makeText(getContext(), "Unable to logoff! Call Calheira!", Toast.LENGTH_LONG).show();
-                return;
+                Toast.makeText(getContext(), "Somehow you were logged in with invalid credentials.", Toast.LENGTH_LONG).show();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getContext().startActivity(intent);
+                System.exit(0);
             }
         } catch (Exception e) {
             System.out.println(e);
