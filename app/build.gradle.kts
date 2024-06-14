@@ -32,6 +32,9 @@ android {
 }
 
 dependencies {
+    implementation("org.projectlombok:lombok:1.18.8")
+    implementation("org.projectlombok:lombok:1.18.8")
+    implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.squareup.okhttp3:okhttp:3.10.0")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation(libs.appcompat)

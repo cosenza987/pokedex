@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent toTeamBuilder = new Intent(getApplicationContext(), TeamBuilder.class);
+
                 startActivity(toTeamBuilder);
             }
         });
