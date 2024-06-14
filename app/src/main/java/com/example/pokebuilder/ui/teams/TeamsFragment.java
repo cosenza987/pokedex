@@ -61,6 +61,12 @@ public class TeamsFragment extends Fragment implements TeamsFragmentRecyclerAdap
         binding = FragmentTeamsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        return root;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        teams.clear();
         sharedPreferences = getContext().getSharedPreferences("UserInfo", MODE_PRIVATE);
 
         FormBody formBody = new FormBody.Builder()
@@ -78,9 +84,7 @@ public class TeamsFragment extends Fragment implements TeamsFragmentRecyclerAdap
                 binding.teamFragmentLayout.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         adapter.setClickListener(this);
-        return root;
     }
-
     @Override
     public void onItemClick(View view, int position) {
         Intent toTeamView = new Intent(getContext(), TeamView.class);
