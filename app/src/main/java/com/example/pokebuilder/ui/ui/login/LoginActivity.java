@@ -26,7 +26,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pokebuilder.MainActivity;
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.ui.SignupMenu;
 import com.example.pokebuilder.ui.data.model.LoggedInUser;
 import com.example.pokebuilder.ui.ui.login.LoginViewModel;
@@ -35,6 +37,8 @@ import com.example.pokebuilder.databinding.ActivityLoginBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.regex.Pattern;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -59,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                     StrictMode.ThreadPolicy .Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        setTitle("IMEmon Login Screen");
         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -156,11 +161,15 @@ public class LoginActivity extends AppCompatActivity {
                         .add("email", email) //calheiros
                         .add("password", password)
                         .build();
-
+                if(!isValid(email)) {
+                    Toast.makeText(getApplicationContext(), "Invalid e-mail address!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Response response;
                 try {
-                    response = makePostRequest("http://localhost:8080/account/login", formBody);
-                    if(response.message().equals("200")) {
+                    response = makePostRequest("http://" + UrlSingleton.getInstance().url + "/account/login", formBody);
+                    System.out.println(response);
+                    if(response.code() == 200) {
                         loadingProgressBar.setVisibility(View.VISIBLE);
                         loginViewModel.login(emailEditText.getText().toString(),
                                 passwordEditText.getText().toString());
@@ -170,24 +179,18 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString("email", emailEditText.getText().toString());
                         editor.putString("password", passwordEditText.getText().toString());
                         editor.commit();
-                        finish();
+                        String welcome = "Welcome " + sharedPreferences.getString("username", "") + "!";
+                        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        getApplicationContext().startActivity(intent);
+                        System.exit(0);
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     System.out.println(e);
                     Toast.makeText(getApplicationContext(), "Server Offline!", Toast.LENGTH_LONG).show();
-                    String username = "lol767";
-                    loadingProgressBar.setVisibility(View.VISIBLE);
-                    loginViewModel.login(emailEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                    sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("email", emailEditText.getText().toString());
-                    editor.putString("username", username);
-                    editor.putString("password", passwordEditText.getText().toString());
-                    editor.commit();
-                    finish();
                 }
             }
 
@@ -230,10 +233,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        return;
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

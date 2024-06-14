@@ -12,6 +12,7 @@ import com.example.pokebuilder.ui.ui.login.LoginActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
         if(!sharedPreferences.contains("username")) {
             Intent login = new Intent(this, LoginActivity.class);
@@ -51,11 +53,6 @@ public class MainActivity extends AppCompatActivity {
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        View hview = navigationView.getHeaderView(0);
-        usernameTextView = (TextView) hview.findViewById(R.id.nav_header_username);
-        emailTextView = (TextView) hview.findViewById(R.id.nav_header_email);
-        usernameTextView.setText(sharedPreferences.getString("username", ""));
-        emailTextView.setText(sharedPreferences.getString("email", ""));
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -76,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         emailTextView = (TextView) hview.findViewById(R.id.nav_header_email);
         usernameTextView.setText(sharedPreferences.getString("username", ""));
         emailTextView.setText(sharedPreferences.getString("email", ""));
+        setTitle("Main Menu");
     }
 
 

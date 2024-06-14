@@ -19,12 +19,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.pokebuilder.R;
+import com.example.pokebuilder.UrlSingleton;
 import com.example.pokebuilder.databinding.ActivityLoginBinding;
 import com.example.pokebuilder.databinding.ActivitySignupMenuBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.regex.Pattern;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -43,6 +46,7 @@ public class SignupMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Sign Up Menu");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_signup_menu);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -55,6 +59,7 @@ public class SignupMenu extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 // Handle the back button event
+                finish();
             }
         };
         this.getOnBackPressedDispatcher().addCallback(this, callback);
@@ -78,11 +83,22 @@ public class SignupMenu extends AppCompatActivity {
                         .add("email", email)
                         .add("password", password)
                         .build();
-
+                if(username.length() == 0) {
+                    Toast.makeText(getApplicationContext(), "No username submitted, unable to register!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(password.length() <= 5) {
+                    Toast.makeText(getApplicationContext(), "Password with length <= 5, unable to register!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(!isValid(email)) {
+                    Toast.makeText(getApplicationContext(), "Invalid e-mail address!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Response response;
                 try {
-                    response = makePostRequest("http://localhost:8080/account/register", formBody);
-                    if(response.message().equals("400")) {
+                    response = makePostRequest("http://" + UrlSingleton.getInstance().url +"/account/register", formBody);
+                    if(response.code() == 200) {
                         sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         getSession(response.body().string(), editor);
@@ -91,23 +107,29 @@ public class SignupMenu extends AppCompatActivity {
                         editor.commit();
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Invalid credentials!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Unable to Process!", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     System.out.println(e);
                     Toast.makeText(getApplicationContext(), "Server Offline!", Toast.LENGTH_LONG).show();
-                    sharedPreferences = getSharedPreferences("UserInfo", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("username", usernameEditText.getText().toString());
-                    editor.putString("email", emailEditText.getText().toString());
-                    editor.putString("password", passwordEditText.getText().toString());
-                    editor.commit();
-                    finish();
                 }
             }
 
         });
 
+    }
+
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 
     private void getSession(String jsonText, SharedPreferences.Editor editor) {
